@@ -4,7 +4,7 @@ import seaborn as sns
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import root_mean_squared_error
+from sklearn.metrics import root_mean_squared_error, r2_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
@@ -30,10 +30,10 @@ nan_matrix = df.isnull()
 print(nan_matrix.sum())
 #  нормализация данных
 scaler = MinMaxScaler()
-scaler.fit(df[["age", "avg_glucose_level"]])
-df[["age", "avg_glucose_level"]] = scaler.transform(df[["age", "avg_glucose_level"]])
+scaler.fit(df[["bmi", "avg_glucose_level"]])
+df[["bmi", "avg_glucose_level"]] = scaler.transform(df[["bmi", "avg_glucose_level"]])
 print("Результат нормолизации:")
-print(df[["age", "avg_glucose_level"]])
+print(df[["bmi", "avg_glucose_level"]])
 #  преобразование категориальных данных
 df = pd.get_dummies(
     df,
@@ -42,9 +42,9 @@ df = pd.get_dummies(
 )
 print("после преобразования")
 print(df.head())
-# 1.	Разделить датасет, подготовленный на первой лабораторной работе, на обучающую и тестовую выборки
-X = df.drop(["bmi"], axis=1)
-y = df["bmi"]
+# 1.	Разделить датасет, подготовленный на первой лабораторной работе, на обучающую и тuестовую выборки
+X = df.drop(["age"], axis=1)
+y = df["age"]
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.25, random_state=42
 )
@@ -54,12 +54,14 @@ from sklearn.linear_model import LinearRegression
 linear_model = LinearRegression()
 linear_model.fit(X_train, y_train)
 y_pred_test = linear_model.predict(X_test)
-print("Первые 10 предсказаний bmi:")
+print("Первые 10 предсказаний age:")
 print(y_pred_test[:10])
 # 3.	Оценить работу регрессионной модели.
 RMSE = root_mean_squared_error(y_test, y_pred_test)
 print("проверка модели:")
 print(RMSE)
+r2=r2_score(y_test,y_pred_test)
+print(r2)
 # 4.	Решить задачу классификации
 scaler = MinMaxScaler()
 scaler.fit(df[["age", "bmi", "avg_glucose_level"]])
